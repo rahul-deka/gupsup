@@ -9,10 +9,8 @@ import logging
 try:
     from .config import Config
 except ImportError:
-    # Fallback for when running as script
     from config import Config
 
-# Configure logging
 logging.basicConfig(level=getattr(logging, Config.get_log_level()))
 logger = logging.getLogger(__name__)
 
@@ -89,7 +87,8 @@ class TerminalChatClient:
         self.reconnect_attempts += 1
         print(f"🔄 Attempting to reconnect... (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})")
         
-        await asyncio.sleep(2 ** self.reconnect_attempts)  # Exponential backoff
+        delay = min(2 ** self.reconnect_attempts, 30) 
+        await asyncio.sleep(delay)
         return await self.connect()
     
     async def receive_messages(self):
@@ -98,34 +97,45 @@ class TerminalChatClient:
             try:
                 if self.websocket:
                     message = await self.websocket.recv()
+                    
+                    if message.startswith(f"{self.username}: "):
+                        continue
+                    
                     print(f"\r{message}")
-                    print("", end="", flush=True)  # Restore input prompt
-            except websockets.exceptions.ConnectionClosed:
-                print("\n🔗 Connection lost. Attempting to reconnect...")
+                    print(f"{self.username}: ", end="", flush=True)
+                    
+            except websockets.exceptions.ConnectionClosedError:
+                if self.is_connected:
+                    print("\n🔗 Connection lost. Attempting to reconnect...")
+                    self.is_connected = False
+                    if await self.reconnect():
+                        continue
+                    else:
+                        break
+            except websockets.exceptions.ConnectionClosedOK:
                 self.is_connected = False
-                if await self.reconnect():
-                    continue
-                else:
-                    break
+                break
             except Exception as e:
-                logger.error(f"Error receiving message: {e}")
+                if self.is_connected: 
+                    logger.error(f"Error receiving message: {e}")
                 break
     
     async def send_messages(self):
         """Handle outgoing messages"""
         while self.is_connected:
             try:
-                # Use asyncio to make input non-blocking
-                message = await asyncio.get_event_loop().run_in_executor(None, input)
+                prompt = f"{self.username}: "
+                message = await asyncio.get_event_loop().run_in_executor(None, input, prompt)
                 
                 if message.lower() in ['quit', 'exit', '/quit', '/exit']:
                     print("👋 Goodbye!")
                     self.is_connected = False
                     break
                 
-                if message.strip():  # Don't send empty messages
+                if message.strip():
                     if self.websocket:
                         formatted_message = f"{self.username}: {message}"
+                        
                         await self.websocket.send(formatted_message)
                         
             except KeyboardInterrupt:
@@ -142,7 +152,6 @@ class TerminalChatClient:
             return
         
         try:
-            # Run receive and send coroutines concurrently
             await asyncio.gather(
                 self.receive_messages(),
                 self.send_messages()
@@ -166,13 +175,11 @@ def run_client():
     client = TerminalChatClient()
     
     try:
-        # Get configuration
         server = client.get_server_config()
         client.channel_code = client.get_channel_code()
         client.username = client.get_username()
         client.server_uri = client.build_websocket_uri(server, client.channel_code)
         
-        # Start chat
         asyncio.run(client.chat())
         
     except KeyboardInterrupt:

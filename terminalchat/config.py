@@ -7,13 +7,12 @@ from typing import Dict, Any
 class Config:
     """Configuration class for TerminalChat client"""
     
-    # Default settings
     DEFAULT_SERVER = "terminalchat-server-1.onrender.com:443"
-    DEFAULT_RECONNECT_ATTEMPTS = 5
-    DEFAULT_PING_INTERVAL = 20
-    DEFAULT_PING_TIMEOUT = 10
-    DEFAULT_CLOSE_TIMEOUT = 10
-    
+    DEFAULT_RECONNECT_ATTEMPTS = 3
+    DEFAULT_PING_INTERVAL = 30
+    DEFAULT_PING_TIMEOUT = 15
+    DEFAULT_CLOSE_TIMEOUT = 15
+
     @classmethod
     def get_server_address(cls) -> str:
         """Get server address from environment or default"""
