@@ -19,6 +19,9 @@ async def chat(uri, username):
 
 def run_client():
     print("Welcome to TerminalChat!")
+    server = input("Enter server address (default: terminalchat-server-1.onrender.com:443): ").strip()
+    if not server:
+        server = "terminalchat-server-1.onrender.com:443"
     choice = input("Enter code to join or type 'new' to create a channel: ").strip()
     if choice.lower() == "new":
         import random, string
@@ -28,5 +31,9 @@ def run_client():
         code = choice
 
     username = input("Enter your name: ").strip()
-    uri = f"wss://terminalchat-server-1.onrender.com/ws/{code}"  # Use wss:// for HTTPS-secured WebSocket
+    # Use ws:// for local/dev, wss:// for production
+    if server.startswith("localhost") or server.startswith("127.0.0.1"):
+        uri = f"ws://{server}/ws/{code}/{username}"
+    else:
+        uri = f"wss://{server}/ws/{code}/{username}"
     asyncio.run(chat(uri, username))
