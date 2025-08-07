@@ -1,28 +1,23 @@
-# TerminalChat
+# TerminalChat (WebSocket Edition)
 
-A terminal-based real-time messaging system where users can join or create channels using a shared code. Works cross-platform and runs entirely in the terminal.
+A terminal-based real-time chat system using WebSockets + FastAPI.
 
-## Installation
+## How to Use
 
+### 1. Start the server
 ```bash
-git clone <repo-url>
-cd terminalchat
-pip install .
+cd websocket_server
+pip install -r requirements.txt
+python main.py
 ```
 
-## Usage
-
-### Start the chat client
+### 2. Install the client
 ```bash
+pip install .
 terminalchat
 ```
 
-### Start the server (on your VPS or local machine)
-```bash
-python -m server.server
-```
-
-The server runs on port 5000 by default.
-
-## License
-MIT
+## Deploying Server to Render
+- Deploy the `websocket_server` folder as a Web Service
+- Use `python main.py` as start command
+- Expose port 8000
