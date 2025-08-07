@@ -28,5 +28,5 @@ def run_client():
         code = choice
 
     username = input("Enter your name: ").strip()
-    uri = f"ws://localhost:8000/ws/{code}/{username}"  # Replace with your Render URL when deployed
+    uri = f"wss://terminalchat-server-1.onrender.com/ws/{code}"  # Use wss:// for HTTPS-secured WebSocket
     asyncio.run(chat(uri, username))
