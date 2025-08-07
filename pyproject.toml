@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terminalchat"
+version = "0.1"
+description = "Terminal-based chat app using WebSockets"
+authors = [{ name="Rahul Deka", email="rahuldeka072@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["websockets"]
+
+[project.scripts]
+terminalchat = "terminalchat.client:run_client"
