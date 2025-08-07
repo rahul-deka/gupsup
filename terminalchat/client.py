@@ -15,7 +15,8 @@ async def chat(uri, username):
 
         while True:
             msg = input()
-            await websocket.send(msg)
+            # Send username as part of the message payload
+            await websocket.send(f"{username}: {msg}")
 
 def run_client():
     print("Welcome to TerminalChat!")
@@ -31,9 +32,8 @@ def run_client():
         code = choice
 
     username = input("Enter your name: ").strip()
-    # Use ws:// for local/dev, wss:// for production
     if server.startswith("localhost") or server.startswith("127.0.0.1"):
-        uri = f"ws://{server}/ws/{code}/{username}"
+        uri = f"ws://{server}/ws/{code}"
     else:
-        uri = f"wss://{server}/ws/{code}/{username}"
+        uri = f"wss://{server}/ws/{code}"
     asyncio.run(chat(uri, username))
