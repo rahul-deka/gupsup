@@ -29,7 +29,7 @@ class TerminalChatClient:
         """Get server configuration from environment or user input"""
         default_server = Config.get_server_address()
         
-        print("TerminalChat - Secure Communication Channel")
+        print("gupsup - Secure Communication Channel")
         return default_server
     
     def get_channel_code(self) -> str:
