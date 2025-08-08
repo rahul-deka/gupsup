@@ -29,20 +29,17 @@ class TerminalChatClient:
         """Get server configuration from environment or user input"""
         default_server = Config.get_server_address()
         
-        print("Welcome to TerminalChat!")
-        server = input(f"Enter server address (default: {default_server}): ").strip()
-        if not server:
-            server = default_server
-        return server
+        print("TerminalChat - Secure Communication Channel")
+        return default_server
     
     def get_channel_code(self) -> str:
         """Get or generate channel code"""
-        choice = input("Enter code to join or type 'new' to create a channel: ").strip()
+        choice = input("Channel code (or 'new' to create): ").strip()
         if choice.lower() == "new":
             import random, string
             code = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-            print(f"Your channel code is: {code}")
-            print("Share this code with others to join your channel!")
+            print(f"Channel created: {code}")
+            print(f"Share code '{code}' with others to join")
             return code
         else:
             return choice
@@ -50,10 +47,10 @@ class TerminalChatClient:
     def get_username(self) -> str:
         """Get username from user"""
         while True:
-            username = input("Enter your name: ").strip()
+            username = input("Username: ").strip()
             if username:
                 return username
-            print("Username cannot be empty. Please try again.")
+            print("Username required. Try again.")
     
     def build_websocket_uri(self, server: str, code: str) -> str:
         """Build WebSocket URI based on server address"""
@@ -65,27 +62,34 @@ class TerminalChatClient:
     async def connect(self) -> bool:
         """Establish WebSocket connection with retry logic"""
         try:
+            print("Establishing connection...")
+            print("Note: Initial connection may take longer if server is sleeping")
+            
             self.websocket = await websockets.connect(
                 self.server_uri,
                 **self.websocket_config
             )
             self.is_connected = True
             self.reconnect_attempts = 0
-            print(f"✅ Connected to channel: {self.channel_code}")
-            print("Type your messages and press Enter to send. Type 'quit' to exit.\n")
+            print(f"🟢 Connected to channel: {self.channel_code}")
+            print("Commands: Type messages to send, 'quit' to exit\n")
             return True
+        except asyncio.TimeoutError:
+            print(f"🔴 Connection timeout - server may be starting up")
+            print("Retry recommended - server should be ready now")
+            return False
         except Exception as e:
-            print(f"❌ Connection failed: {e}")
+            print(f"🔴 Connection failed: {e}")
             return False
     
     async def reconnect(self) -> bool:
         """Attempt to reconnect to the server"""
         if self.reconnect_attempts >= self.max_reconnect_attempts:
-            print(f"❌ Max reconnection attempts ({self.max_reconnect_attempts}) reached. Giving up.")
+            print(f"🔴 Max reconnection attempts reached ({self.max_reconnect_attempts}). Aborting.")
             return False
         
         self.reconnect_attempts += 1
-        print(f"🔄 Attempting to reconnect... (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})")
+        print(f"Reconnecting... (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})")
         
         delay = min(2 ** self.reconnect_attempts, 30) 
         await asyncio.sleep(delay)
@@ -106,7 +110,7 @@ class TerminalChatClient:
                     
             except websockets.exceptions.ConnectionClosedError:
                 if self.is_connected:
-                    print("\n🔗 Connection lost. Attempting to reconnect...")
+                    print("\nConnection lost. Reconnecting...")
                     self.is_connected = False
                     if await self.reconnect():
                         continue
@@ -128,7 +132,7 @@ class TerminalChatClient:
                 message = await asyncio.get_event_loop().run_in_executor(None, input, prompt)
                 
                 if message.lower() in ['quit', 'exit', '/quit', '/exit']:
-                    print("👋 Goodbye!")
+                    print("Terminating session.")
                     self.is_connected = False
                     break
                 
@@ -139,25 +143,22 @@ class TerminalChatClient:
                         await self.websocket.send(formatted_message)
                         
             except KeyboardInterrupt:
-                print("\n👋 Goodbye!")
+                print("\nSession interrupted.")
                 self.is_connected = False
                 break
             except Exception as e:
-                print(f"❌ Error sending message: {e}")
+                print(f"🔴 Error sending message: {e}")
                 break
     
     async def chat(self):
         """Main chat loop"""
-        if not await self.connect():
-            return
-        
         try:
             await asyncio.gather(
                 self.receive_messages(),
                 self.send_messages()
             )
         except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
+            print("\nSession terminated.")
         finally:
             await self.cleanup()
     
@@ -180,10 +181,30 @@ def run_client():
         client.username = client.get_username()
         client.server_uri = client.build_websocket_uri(server, client.channel_code)
         
-        asyncio.run(client.chat())
+        async def connect_with_retry():
+            max_initial_attempts = 2
+            for attempt in range(max_initial_attempts):
+                if await client.connect():
+                    return True
+                elif attempt < max_initial_attempts - 1:
+                    print(f"Retrying connection... (attempt {attempt + 2}/{max_initial_attempts})")
+                    await asyncio.sleep(3)
+            return False
+        
+        async def main():
+            if not await connect_with_retry():
+                print("🔴 Connection failed after multiple attempts.")
+                print("Check network connection and retry.")
+                return
+            await client.chat()
+        
+        asyncio.run(main())
         
     except KeyboardInterrupt:
-        print("\n👋 Goodbye!")
+        print("\nExiting.")
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"🔴 System error: {e}")
         sys.exit(1)
+
+if __name__ == "__main__":
+    run_client()

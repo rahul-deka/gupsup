@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "terminalchat"
 version = "1.0.0"
-description = "Terminal-based chat app using WebSockets with improved error handling and reconnection"
+description = "Secure terminal-based chat application for real-time communication"
 authors = [{ name="Rahul Deka", email="rahuldeka072@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.8"

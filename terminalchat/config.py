@@ -12,6 +12,7 @@ class Config:
     DEFAULT_PING_INTERVAL = 30
     DEFAULT_PING_TIMEOUT = 15
     DEFAULT_CLOSE_TIMEOUT = 15
+    DEFAULT_CONNECTION_TIMEOUT = 30 
 
     @classmethod
     def get_server_address(cls) -> str:
@@ -33,6 +34,7 @@ class Config:
             'ping_interval': cls.DEFAULT_PING_INTERVAL,
             'ping_timeout': cls.DEFAULT_PING_TIMEOUT,
             'close_timeout': cls.DEFAULT_CLOSE_TIMEOUT,
+            'open_timeout': cls.DEFAULT_CONNECTION_TIMEOUT,
         }
     
     @classmethod
