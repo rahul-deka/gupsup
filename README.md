@@ -2,6 +2,7 @@
 
 *A secure terminal-based chat application for real-time communication — right from your terminal.*
 
+[![PyPI Downloads](https://static.pepy.tech/badge/gupsup)](https://pepy.tech/projects/gupsup)
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
 
