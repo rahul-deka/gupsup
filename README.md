@@ -1,10 +1,17 @@
+<div align="center">
+
 # gupsup
 
-*A secure terminal-based chat application for real-time communication — right from your terminal.*
+<em>A secure terminal-based chat application for real-time communication — right from your terminal.</em>
 
 [![PyPI Downloads](https://static.pepy.tech/badge/gupsup)](https://pepy.tech/projects/gupsup)
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
+
+Learn more and explore detailed info at [gupsup-cli](https://gupsup-cli.vercel.app/)
+</div>
+
+
 
 ## ⚡ Quick Start
 
