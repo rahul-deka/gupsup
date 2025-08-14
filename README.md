@@ -10,7 +10,7 @@
 
 Learn more and explore detailed info at [gupsup-cli](https://gupsup-cli.vercel.app/)
 
-Looking for the server? See [terminalchat-server](https://github.com/iamRahul21/terminalchat-server)
+Looking for the server? See [gupsup-server](https://github.com/iamRahul21/terminalchat-server)
 </div>
 
 
