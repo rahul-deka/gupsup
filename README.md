@@ -9,6 +9,8 @@
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
 
 Learn more and explore detailed info at [gupsup-cli](https://gupsup-cli.vercel.app/)
+
+Looking for the server? See [terminalchat-server](https://github.com/iamRahul21/terminalchat-server)
 </div>
 
 
@@ -76,10 +78,17 @@ Terminating session.
 
 ## Development Install
 ```bash
+# Client:
 git clone https://github.com/iamRahul21/terminalchat.git
 cd terminalchat
 pip install -e .
 gupsup
+
+# Server (required to host your own backend):
+git clone https://github.com/iamRahul21/terminalchat-server.git
+cd terminalchat-server
+pip install -r requirements.txt
+python main.py
 ```
 
 ## Commands
@@ -112,8 +121,8 @@ gupsup
 ## Architecture
 
 ```
-Terminal Client ←→ WebSocket ←→ FastAPI Server ←→ Channel Manager
-    (gupsup)                   (gupsup-server)
+Terminal Client  ←→  WebSocket  ←→  FastAPI Server  ←→  Channel Manager
+   (gupsup)         (see: https://github.com/iamRahul21/terminalchat-server)
 ```
 
 ## Contributing
