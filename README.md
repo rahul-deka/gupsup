@@ -29,6 +29,7 @@ That's it! Start chatting instantly.
 ## Features
 
 - **Zero-friction setup** - Just run `gupsup` and start chatting
+- **End-to-end encryption** - Messages are encrypted on your device and only readable by others with the same channel code
 - **Secure channels** - Create private rooms with shareable codes  
 - **Auto-reconnection** - Handles network issues gracefully
 - **Cross-platform** - Works on Windows, macOS, Linux
@@ -71,6 +72,7 @@ Terminating session.
 
 ## Security & Privacy
 
+- **End-to-end encryption** - Only clients with the same channel code and updated app can read your messages
 - **Channel isolation** - Only people with your code can join
 - **No message storage** - Everything is real-time only
 - **No accounts** - Completely anonymous
@@ -79,14 +81,14 @@ Terminating session.
 ## Development Install
 ```bash
 # Client:
-git clone https://github.com/iamRahul21/terminalchat.git
-cd terminalchat
+git clone https://github.com/iamRahul21/gupsup.git
+cd gupsup
 pip install -e .
 gupsup
 
 # Server (required to host your own backend):
-git clone https://github.com/iamRahul21/terminalchat-server.git
-cd terminalchat-server
+git clone https://github.com/iamRahul21/gupsup-server.git
+cd gupsup-server
 pip install -r requirements.txt
 python main.py
 ```
@@ -100,15 +102,30 @@ python main.py
 
 ## Troubleshooting
 
-**Connection timeouts?**
+<details>
+<summary><strong>Encrypted messages look garbled or cause errors in old clients?</strong></summary>
+
+- Make sure all users are on the latest version of the app to support end-to-end encryption.
+
+</details>
+
+<details>
+<summary><strong>Connection timeouts?</strong></summary>
+
 - First connection may be slow (server waking up)
 - Try again - should connect immediately
 - Check internet connection
 
-**Messages not appearing?**
+</details>
+
+<details>
+<summary><strong>Messages not appearing?</strong></summary>
+
 - Ensure same channel code
 - Check if others are actually connected
 - Try creating a new channel
+
+</details>
 
 ## 📦 Package Details
 
@@ -122,7 +139,7 @@ python main.py
 
 ```
 Terminal Client  ←→  WebSocket  ←→  FastAPI Server  ←→  Channel Manager
-   (gupsup)         (see: https://github.com/iamRahul21/terminalchat-server)
+   (gupsup)         (see: https://github.com/iamRahul21/gupsup-server)
 ```
 
 ## Contributing

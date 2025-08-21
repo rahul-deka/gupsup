@@ -3,8 +3,13 @@ import websockets
 import json
 import sys
 import os
+import base64
 from typing import Optional
 import logging
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.backends import default_backend
 
 try:
     from .config import Config
@@ -15,6 +20,36 @@ logging.basicConfig(level=getattr(logging, Config.get_log_level()))
 logger = logging.getLogger(__name__)
 
 class TerminalChatClient:
+    def derive_key(self, passphrase: str) -> bytes:
+        # Use a static salt for simplicity; for real security, use a random salt and share it
+        salt = b'gupsup-static-salt'
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100_000,
+            backend=default_backend()
+        )
+        return kdf.derive(passphrase.encode())
+
+    def encrypt_message(self, plaintext: str) -> str:
+        key = self.derive_key(self.channel_code)
+        aesgcm = AESGCM(key)
+        nonce = os.urandom(12)
+        ct = aesgcm.encrypt(nonce, plaintext.encode(), None)
+        return base64.b64encode(nonce + ct).decode()
+
+    def decrypt_message(self, ciphertext_b64: str) -> Optional[str]:
+        try:
+            key = self.derive_key(self.channel_code)
+            aesgcm = AESGCM(key)
+            data = base64.b64decode(ciphertext_b64)
+            nonce, ct = data[:12], data[12:]
+            pt = aesgcm.decrypt(nonce, ct, None)
+            return pt.decode()
+        except Exception as e:
+            logger.error(f"Decryption failed: {e}")
+            return None
     def __init__(self):
         self.websocket: Optional[websockets.WebSocketServerProtocol] = None
         self.username: str = ""
@@ -96,18 +131,18 @@ class TerminalChatClient:
         return await self.connect()
     
     async def receive_messages(self):
-        """Handle incoming messages"""
+        """Handle incoming messages (decrypt)"""
         while self.is_connected:
             try:
                 if self.websocket:
                     message = await self.websocket.recv()
-                    
-                    if message.startswith(f"{self.username}: "):
+                    plaintext = self.decrypt_message(message)
+                    if plaintext is None:
                         continue
-                    
-                    print(f"\r{message}")
+                    if plaintext.startswith(f"{self.username}: "):
+                        continue
+                    print(f"\r{plaintext}")
                     print(f"{self.username}: ", end="", flush=True)
-                    
             except websockets.exceptions.ConnectionClosedError:
                 if self.is_connected:
                     print("\nConnection lost. Reconnecting...")
@@ -125,23 +160,20 @@ class TerminalChatClient:
                 break
     
     async def send_messages(self):
-        """Handle outgoing messages"""
+        """Handle outgoing messages (encrypt)"""
         while self.is_connected:
             try:
                 prompt = f"{self.username}: "
                 message = await asyncio.get_event_loop().run_in_executor(None, input, prompt)
-                
                 if message.lower() in ['quit', 'exit', '/quit', '/exit']:
                     print("Terminating session.")
                     self.is_connected = False
                     break
-                
                 if message.strip():
                     if self.websocket:
                         formatted_message = f"{self.username}: {message}"
-                        
-                        await self.websocket.send(formatted_message)
-                        
+                        encrypted = self.encrypt_message(formatted_message)
+                        await self.websocket.send(encrypted)
             except KeyboardInterrupt:
                 print("\nSession interrupted.")
                 self.is_connected = False
