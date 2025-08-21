@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="terminalchat",
-    version="1.0.2",
+    version="1.0.3",
     author="Rahul Deka",
     author_email="rahuldeka072@gmail.com",
     description="Terminal-based chat app using WebSockets with improved error handling and reconnection",
