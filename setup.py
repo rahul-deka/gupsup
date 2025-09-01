@@ -11,7 +11,7 @@ setup(
     description="Secure terminal-based chat application with image sharing for real-time communication",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/iamRahul21/terminalchat",
+    url="https://github.com/iamRahul21/gupsup",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -35,5 +35,5 @@ setup(
             'terminalchat=terminalchat.client:run_client',
         ],
     },
-    keywords="chat terminal websocket real-time",
+    keywords="chat terminal websocket real-time gupsup",
 )
