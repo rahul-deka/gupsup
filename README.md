@@ -2,7 +2,7 @@
 
 # gupsup
 
-<em>A secure terminal-based chat application for real-time communication — right from your terminal.</em>
+<em>A secure terminal-based chat application with image sharing for real-time communication — right from your terminal.</em>
 
 [![PyPI Downloads](https://static.pepy.tech/badge/gupsup)](https://pepy.tech/projects/gupsup)
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
@@ -28,12 +28,14 @@ That's it! Start chatting instantly.
 
 ## Features
 
-- **Zero-friction setup** - Just run `gupsup` and start chatting
-- **End-to-end encryption** - Messages are encrypted on your device and only readable by others with the same channel code
-- **Secure channels** - Create private rooms with shareable codes  
-- **Auto-reconnection** - Handles network issues gracefully
-- **Cross-platform** - Works on Windows, macOS, Linux
-- **No account required** - Anonymous secure communication
+- **Zero-friction setup** - Just run `gupsup` and start chatting instantly
+- **End-to-end encryption** - AES-256-GCM encryption with PBKDF2 key derivation
+- **Image sharing** - Send and receive images (PNG, JPG, GIF, BMP, WebP) up to 2MB
+- **Secure channels** - Create private rooms with shareable 6-character codes  
+- **Auto-reconnection** - Handles network issues gracefully with smart retry logic
+- **Cross-platform** - Works seamlessly on Windows, macOS, Linux
+- **No account required** - Completely anonymous, no sign-up needed
+- **Smart image handling** - Automatic format detection, metadata preservation
 
 ## Usage
 
@@ -55,10 +57,24 @@ Username: qwerty
 
 Establishing connection...
 🟢 Connected to channel: a4b2c1
-Commands: Type messages to send, 'quit' to exit
+Commands:
+  - Type messages to send
+  - '/image <path>' to send image
+  - '/save [filename]' to save last received image
+  - 'quit' to exit
 
 qwerty: Hello world!
 mrrobot: Hey there!
+qwerty: /image photo.jpg
+Processing image...
+Image sent: photo.jpg
+alice sent an image:
+   └─ File: vacation.png
+   └─ Type: image/png
+   └─ Size: 245.3KB
+   └─ Use '/save vacation.png' to save this image
+qwerty: /save my_vacation.png
+Image saved to: e:\downloads\my_vacation.png
 qwerty: quit
 Terminating session.
 ```
@@ -72,91 +88,175 @@ Terminating session.
 
 ## Security & Privacy
 
-- **End-to-end encryption** - Only clients with the same channel code and updated app can read your messages
-- **Channel isolation** - Only people with your code can join
-- **No message storage** - Everything is real-time only
-- **No accounts** - Completely anonymous
-- **Secure transport** - All communication encrypted in transit
+- **Military-grade encryption** - AES-256-GCM with authenticated encryption
+- **Secure key derivation** - PBKDF2 with 100,000 iterations and SHA-256
+- **Channel isolation** - Each channel has its own unique encryption key
+- **Zero server knowledge** - Server cannot decrypt messages or images
+- **Ephemeral messaging** - No message storage, everything is real-time only
+- **Complete anonymity** - No accounts, no tracking, no data collection
+- **Perfect forward secrecy** - Unique nonces ensure message security
 
-## Development Install
+### Encryption Technical Details
+- **Algorithm**: AES-256-GCM (Galois/Counter Mode)
+- **Key Size**: 256-bit encryption keys
+- **Nonce**: 96-bit random nonce per message
+- **Authentication**: Built-in message authentication
+- **Key Derivation**: PBKDF2-HMAC-SHA256 with 100k iterations
+
+### Development Install
 ```bash
-# Client:
+# Clone the repository
 git clone https://github.com/iamRahul21/gupsup.git
 cd gupsup
-pip install -e .
-gupsup
 
-# Server (required to host your own backend):
+# Install in development mode
+pip install -e .
+
+# Run the application
+gupsup
+```
+
+### Server Setup (Optional)
+```bash
+# For hosting your own server
 git clone https://github.com/iamRahul21/gupsup-server.git
 cd gupsup-server
 pip install -r requirements.txt
 python main.py
 ```
 
-## Commands
+## Available Commands
 
-- **Type normally** to send messages
-- **`quit`** or **`exit`** to leave
-- **Ctrl+C** to force quit
-- **Enter without text** is ignored
+### Chat Commands
+- **Send message**: Simply type your message and press Enter
+- **Exit**: `quit`, `exit`, `/quit`, or `/exit`
+- **Force quit**: Press `Ctrl+C`
 
-## Troubleshooting
+### Image Commands
+- **Send image**: `/image <path>` 
+  - Example: `/image ~/Pictures/photo.jpg`
+  - Example: `/image C:\Users\Me\Desktop\image.png`
+- **Save received image**: `/save [custom_filename]`
+  - Example: `/save` (uses original filename)
+  - Example: `/save my_photo.jpg` (custom filename)
+
+### Image Support Details
+
+| Feature | Details |
+|---------|---------|
+| **Formats** | PNG, JPG/JPEG, GIF, BMP, WebP |
+| **Size Limit** | 2MB per image (optimized for reliability) |
+| **Encryption** | Full end-to-end encryption like text messages |
+| **Metadata** | Filename, size, and MIME type preserved |
+| **Validation** | Automatic format detection and size checking |
+
+#### Image Usage Examples
+```bash
+# Send images
+/image path/photo.png
+
+# Save received images
+/save                    # Save with original name
+/save my_image.jpg       # Save with custom name
+/save folder/image.png   # Save to specific path
+```
+
+## 🛠️ Troubleshooting
 
 <details>
-<summary><strong>Encrypted messages look garbled or cause errors in old clients?</strong></summary>
+<summary><strong>Connection Issues</strong></summary>
 
-- Make sure all users are on the latest version of the app to support end-to-end encryption.
-
-</details>
-
-<details>
-<summary><strong>Connection timeouts?</strong></summary>
-
+**Symptoms**: Connection timeouts, frequent disconnects
 - First connection may be slow (server waking up)
-- Try again - should connect immediately
-- Check internet connection
+- Retry connection - should be faster on subsequent attempts
+- Check your internet connection
+- Verify the server is accessible
 
 </details>
 
 <details>
-<summary><strong>Messages not appearing?</strong></summary>
+<summary><strong>Image Problems</strong></summary>
 
-- Ensure same channel code
-- Check if others are actually connected
+**Large images failing**: 
+- Ensure image is under 2MB
+- Use image compression tools if needed
+- Supported formats: PNG, JPG, GIF, BMP, WebP
+
+**Can't save images**:
+- Check file permissions in save directory
+- Ensure sufficient disk space
+- Try saving to a different location
+
+</details>
+
+<details>
+<summary><strong>Encryption Issues</strong></summary>
+
+**Messages appear garbled**:
+- Ensure all users have the same channel code
+- Verify everyone is using the latest version
 - Try creating a new channel
 
+**Can't see messages**:
+- Confirm you're in the correct channel
+- Check if other users are actually connected
+- Restart the application
+
 </details>
 
-## 📦 Package Details
+<details>
+<summary><strong>Platform-Specific Issues</strong></summary>
 
-- **Package**: `gupsup` on PyPI
-- **Command**: `gupsup` 
-- **Python**: 3.8+ required
-- **Dependencies**: Only `websockets>=11.0`
-- **Size**: Ultra-lightweight
+**Windows**: 
+- Use PowerShell or Command Prompt
+- Ensure Python 3.8+ is installed
+
+**macOS/Linux**:
+- Use Terminal application
+- May need to install Python development headers
+- Check file path permissions for images
+
+</details>
+
+## 📦 Package Information
+
+| Detail | Information |
+|--------|-------------|
+| **Package Name** | `gupsup` on PyPI |
+| **CLI Command** | `gupsup` |
+| **Python Version** | 3.8+ required |
+| **Dependencies** | `websockets>=11.0`, `cryptography>=3.0.0` |
+| **Size** | Ultra-lightweight (~50KB) |
+| **License** | MIT License |
+| **Latest Version** | 1.1.0 (with image support) |
 
 ## Architecture
 
 ```
-Terminal Client  ←→  WebSocket  ←→  FastAPI Server  ←→  Channel Manager
-   (gupsup)         (see: https://github.com/iamRahul21/gupsup-server)
+┌─────────────────┐    WebSocket     ┌──────────────────┐    Channel    ┌─────────────────┐
+│  Terminal       │ ←─────────────→  │  FastAPI         │ ←──────────→  │  Channel        │
+│  Client         │  (Encrypted)     │  Server          │   Management  │  Manager        │
+│  (gupsup)       │                  │                  │               │                 │
+└─────────────────┘                  └──────────────────┘               └─────────────────┘
+        ↑                                      ↑
+   AES-256-GCM                         Relay Only
+   Encryption                        (Cannot Decrypt)
 ```
 
-## Contributing
-
-1. Fork on GitHub
-2. Create feature branch
-3. Test thoroughly  
-4. Submit pull request
-
-## 📄 License
-
-MIT License - use freely, contribute back.
-
-## Author
-
-**[Rahul Deka](https://rahul-deka.vercel.app/)**
+### How Messages Flow:
+1. **Client A** encrypts message with channel key
+2. **Server** receives encrypted message (cannot decrypt)
+3. **Server** relays encrypted message to **Client B**
+4. **Client B** decrypts message with same channel key
 
 ---
 
+<div align="center">
+
 **Simple. Secure. Terminal-native.**
+
+MIT License - use freely, contribute back. 
+
+**[Rahul Deka](https://rahul-deka.vercel.app/)**
+
+</div>

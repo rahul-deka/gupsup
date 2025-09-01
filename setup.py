@@ -4,11 +4,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="terminalchat",
-    version="1.0.3",
+    name="gupsup",
+    version="1.1.0",
     author="Rahul Deka",
     author_email="rahuldeka072@gmail.com",
-    description="Terminal-based chat app using WebSockets with improved error handling and reconnection",
+    description="Secure terminal-based chat application with image sharing for real-time communication",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/iamRahul21/terminalchat",
@@ -28,6 +28,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "websockets>=11.0",
+        "cryptography>=3.0.0"
     ],
     entry_points={
         'console_scripts': [
