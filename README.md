@@ -4,7 +4,7 @@
 
 <em>A secure terminal-based chat application with image sharing for real-time communication — right from your terminal.</em>
 
-[![PyPI Downloads](https://static.pepy.tech/badge/gupsup)](https://pepy.tech/projects/gupsup)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/gupsup?period=total&units=NONE&left_color=GREY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/gupsup)
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
 
