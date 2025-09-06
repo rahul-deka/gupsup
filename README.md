@@ -8,6 +8,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
 ![GitHub repo size](https://img.shields.io/github/repo-size/iamRahul21/gupsup?label=size)
+![PyPI - License](https://img.shields.io/pypi/l/gupsup)
 
 Learn more and explore detailed info at [gupsup-cli](https://gupsup-cli.vercel.app/)
 
