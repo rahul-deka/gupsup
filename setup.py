@@ -11,7 +11,7 @@ setup(
     description="Secure terminal-based chat application with image sharing for real-time communication",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/iamRahul21/gupsup",
+    url="https://github.com/rahul-deka/gupsup",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

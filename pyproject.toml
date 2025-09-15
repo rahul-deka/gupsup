@@ -30,6 +30,6 @@ classifiers = [
 gupsup = "terminalchat.client:run_client"
 
 [project.urls]
-Homepage = "https://github.com/iamRahul21/terminalchat"
-Repository = "https://github.com/iamRahul21/terminalchat"
-Issues = "https://github.com/iamRahul21/terminalchat/issues"
+Homepage = "https://github.com/rahul-deka/terminalchat"
+Repository = "https://github.com/rahul-deka/terminalchat"
+Issues = "https://github.com/rahul-deka/terminalchat/issues"

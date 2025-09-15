@@ -7,12 +7,12 @@
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/gupsup?period=total&units=NONE&left_color=GREY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/gupsup)
 [![PyPI version](https://img.shields.io/pypi/v/gupsup)](https://pypi.org/project/gupsup/)
 [![Python version](https://img.shields.io/pypi/pyversions/gupsup)](https://pypi.org/project/gupsup/)
-![GitHub repo size](https://img.shields.io/github/repo-size/iamRahul21/gupsup?label=size)
+![GitHub repo size](https://img.shields.io/github/repo-size/rahul-deka/gupsup?label=size)
 ![PyPI - License](https://img.shields.io/pypi/l/gupsup)
 
 Learn more and explore detailed info at [gupsup-cli](https://gupsup-cli.vercel.app/)
 
-Looking for the server? See [gupsup-server](https://github.com/iamRahul21/terminalchat-server)
+Looking for the server? See [gupsup-server](https://github.com/rahul-deka/terminalchat-server)
 </div>
 
 
@@ -108,7 +108,7 @@ Terminating session.
 ### Development Install
 ```bash
 # Clone the repository
-git clone https://github.com/iamRahul21/gupsup.git
+git clone https://github.com/rahul-deka/gupsup.git
 cd gupsup
 
 # Install in development mode
@@ -121,7 +121,7 @@ gupsup
 ### Server Setup (Optional)
 ```bash
 # For hosting your own server
-git clone https://github.com/iamRahul21/gupsup-server.git
+git clone https://github.com/rahul-deka/gupsup-server.git
 cd gupsup-server
 pip install -r requirements.txt
 python main.py
